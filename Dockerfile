@@ -24,6 +24,9 @@ LABEL maintainer="Wilmar den Ouden <wilmaro@intermax.nl>"
 # Needed to fix: Failed to initialize CoreCLR, HRESULT: 0x80004005
 ENV COMPlus_EnableDiagnostics=0
 
+# Adds sh to container
+COPY --from=powershell-alpine /bin/sh /bin/sh
+
 # Copy binary and files
 COPY --from=powershell-alpine --chown=10001:10001 /opt/microsoft/powershell/6-preview/ /opt/microsoft/powershell/6-preview/
 
