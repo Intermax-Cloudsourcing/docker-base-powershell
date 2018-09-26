@@ -1,5 +1,17 @@
 FROM mcr.microsoft.com/powershell:6.1.0-rc.1-alpine-3.8 as powershell-alpine
 
+# Newest UPX not yet in Alpine
+RUN apk add xz \
+    && wget -qO- https://github.com/upx/upx/releases/download/v3.95/upx-3.95-amd64_linux.tar.xz | tar x -J --strip-components=1 -C /tmp/
+
+# Compress libraries and executables with UPX
+RUN /tmp/upx --brute --best $(find /usr/lib -path /usr/lib/engines -prune -o -type f -perm +111 -print) || true
+RUN chmod 755 /lib/libssl.so.1.0.0 /lib/libcrypto.so.1.0.0 \
+    && /tmp/upx --brute --best /lib/libssl.so.1.0.0 /lib/libcrypto.so.1.0.0 /lib/libz.so.1.*
+
+RUN /tmp/upx --brute --best $(find /opt/microsoft/powershell/6-preview/ -type f -not -name "libcoreclr.so" -name *.so -print) || true
+RUN /tmp/upx --brute --best /opt/microsoft/powershell/6-preview/pwsh /opt/microsoft/powershell/6-preview/createdump
+
 RUN adduser -h /dev/shm -u 10001 -S user
 COPY profile.ps1 /opt/microsoft/powershell/6-preview/
 
@@ -30,7 +42,7 @@ COPY --from=powershell-alpine /lib/libcrypto.so.1.0.0 /lib/
 COPY --from=powershell-alpine "/usr/lib/libstdc++.so.6" /usr/lib/
 # zlib
 COPY --from=powershell-alpine /lib/libz.so.1 /lib/
-# musl
+# musl cannot be upx'ed
 COPY --from=powershell-alpine "/lib/ld-musl-x86_64.so.1" /lib/
 
 # Copy ncurses-terminfo-base
