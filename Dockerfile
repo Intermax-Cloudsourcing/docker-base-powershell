@@ -13,7 +13,7 @@ RUN /tmp/upx --brute --best $(find /opt/microsoft/powershell/6-preview/ -type f 
 RUN /tmp/upx --brute --best /opt/microsoft/powershell/6-preview/pwsh /opt/microsoft/powershell/6-preview/createdump
 
 RUN adduser -h /dev/shm -u 10001 -S user
-COPY profile.ps1 /opt/microsoft/powershell/6-preview/
+# COPY profile.ps1 /opt/microsoft/powershell/6-preview/
 
 ######################################################
 # BUILD MINIMAL POWERSHELL IMAGE
