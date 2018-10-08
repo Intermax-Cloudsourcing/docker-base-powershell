@@ -2,5 +2,5 @@
 
 ## Usage
 ```
-docker run -it --tmpfs /tmp docker-base-powershell
+docker run -it --tmpfs /tmp --read-only docker-base-powershell
 ```

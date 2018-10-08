@@ -1,2 +1,0 @@
-### Find open files on startup
-strace -f -e trace=open -o process.trace <command to start process>
